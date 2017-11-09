@@ -15,7 +15,7 @@ public class Driver {
 		return isUnique;
 	}
 
-	// factorial function, needed for math stuff
+	// factorial function
 	static int factorial(int num) {
 		int fact = 1;
 		for (int i = 1; i <= num; i++) {
@@ -23,10 +23,27 @@ public class Driver {
 		}
 		return fact;
 	}
+	
+	//an memory-efficient method for calculating nCr stolen from the internet
+	//my method was overflowing int so I found a better one
+	private static long binomial(int n, int k)
+	    {
+	        if (k>n-k)
+	            k=n-k;
+	 
+	        long b=1;
+	        for (int i=1, m=n; i<=k; i++, m--)
+	            b=b*m/i;
+	        return b;
+	    }
 
 	public static void main(String[] args) {
 		int numVertex = 0;// number of vertexes in the graph
-		int[][] graphDefinition = new int[numVertex][numVertex];
+		int[][] graphDefinition = new int[][]{{0,1,1,1,1},
+										  	  {1,0,1,1,1},
+										  	  {1,1,0,1,1},
+										  	  {1,1,1,0,1},
+										  	  {1,1,1,1,0}};
 
 		// creates an array that, for each index in the graph definition array, stores
 		// the number of connections on that vertex.
@@ -92,12 +109,11 @@ public class Driver {
 		baseTile tile;
 		for (int i = 0; i < complexTiles.length; i++) {
 			tile = new baseTile(i + 1, connectionTypes);
-			complexTiles[i] = new int[factorial(connectionTypes) / (factorial(connectionTypes - (i + 1)) * factorial(i + 1))][];
+			complexTiles[i] = new int[(int)binomial(connectionTypes+i,i+1)][];//updated formula for multiset counting
 			for (int j = 0; j < complexTiles[i].length; j++) {
 				complexTiles[i][j] = tile.returnTile();
 				tile.count();
 			}
 		}
-
 	}
 }

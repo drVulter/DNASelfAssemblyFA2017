@@ -12,15 +12,20 @@ class baseTile {
  	}
  	
  	//moves to the next arm combination
+ 	int i = 1;
  	void count(){
- 		for (int i=0;i<tileSize;i++){
- 			if (baseTile[i]<base-1){
- 				baseTile[i]++;
- 				break;	
- 			} else baseTile[i]=0;
+ 		for (int j=0;j<tileSize;j++) {
+ 			if (baseTile[j]<(base-1)) {
+ 				baseTile[j]++;
+ 				break;
+ 			}
+ 			else {
+ 				baseTile[j]=i;
+ 				i++;
+ 			}
  		}
  	}
- 	
+ 		
  	//this method translates the current tile count to a real tile array.
  	int [] returnTile(){
  		/*This constant is never used. I just wanted to display the codification 
