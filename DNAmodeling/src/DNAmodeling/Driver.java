@@ -38,12 +38,12 @@ public class Driver {
 	    }
 
 	public static void main(String[] args) {
-		int numVertex = 0;// number of vertexes in the graph
-		int[][] graphDefinition = new int[][]{{0,1,1,1,1},
-										  	  {1,0,1,1,1},
-										  	  {1,1,0,1,1},
-										  	  {1,1,1,0,1},
-										  	  {1,1,1,1,0}};
+		int numVertex = 0;// number of vertexes in the graph; to be determined in later versions with graph file input
+		int[][] graphDefinition = new int[][]{{0,1,1,1,1},//easy test graph changed as needed, necessary for testing
+										  	  {1,0,0,0,0},
+										  	  {1,0,0,0,0},
+										  	  {1,0,0,0,0},
+										  	  {1,0,0,0,0}};
 
 		// creates an array that, for each index in the graph definition array, stores
 		// the number of connections on that vertex.
@@ -100,9 +100,12 @@ public class Driver {
 		 * dimension is the size of the tiles in that dimension. This dimension is only
 		 * useful for organization. In this implementation, the tiles in each dimension
 		 * will be the dimension's index plus 1. The second dimension are all the tiles
-		 * of the size of the first dimension. The size of this dimension will vary
-		 * according to the combination of the tile size choosing the connectionTypes.
-		 * The third dimension is the tiles themselves
+		 * of the size indicated by the first dimension. The size of this second
+		 * dimension will vary according to the combination of the tile size choosing
+		 * the connectionTypes. The third dimension is the tiles themselves. This initial
+		 * array, complexTiles unfortunately contains all of the tile combinations less than
+		 * or equal to the largest tile in the graph. In many graphs, the small tiles will
+		 * not be used at all. These extraneous tile sizes will be removed in the next step.
 		 */
 		int[][][] complexTiles = new int[maxTileSize][][];
 
@@ -115,5 +118,12 @@ public class Driver {
 				tile.count();
 			}
 		}
+		
+		//now we're going to remove all the extraneous tiles and get our final tile array
+		int numTiles=0;
+		for (int v: tileSizeTypes) {
+			numTiles += (int)binomial(v+connectionTypes-1,connectionTypes);
+		}
+		int[][] tiles = new int[numTiles][];
 	}
 }

@@ -4,24 +4,40 @@ class baseTile {
  	int base;
  	int[]baseTile;
  	int tileSize;
+ 	int[]currentMin;
  	
  	baseTile(int inputTileSize,int inputBase){
  		base = inputBase;
  		tileSize = inputTileSize;
  		baseTile = new int[tileSize];
+ 		currentMin = new int[tileSize];
+ 		for (int i = 0;i<tileSize;i++)
+ 			currentMin[i] = 0;
  	}
  	
  	//moves to the next arm combination
- 	int i = 1;
  	void count(){
- 		for (int j=0;j<tileSize;j++) {
- 			if (baseTile[j]<(base-1)) {
- 				baseTile[j]++;
+ 		for (int i=0;i<tileSize;i++) {
+ 			if (baseTile[i]<(base-1)) {
+ 				baseTile[i]++;
  				break;
  			}
+ 			else if (i<(tileSize-1)) {
+	 				currentMin[i]++;
+	 				for (int j=i;j>=0;j--)
+	 					currentMin[j]=currentMin[i];
+	 				if (baseTile[i+1]<(base-1)) {
+	 					for (int j=i;j>=0;j--)
+	 						baseTile[j]=currentMin[j];
+ 					}
+ 			}
  			else {
- 				baseTile[j]=i;
- 				i++;
+ 				currentMin[i]++;
+ 				for (int j=i;j>=0;j--) {
+ 					currentMin[j]=currentMin[i];
+ 					baseTile[j]=currentMin[j];
+ 				}
+ 			
  			}
  		}
  	}
