@@ -38,12 +38,11 @@ public class Driver {
 	    }
 
 	public static void main(String[] args) {
-		int numVertex = 0;// number of vertexes in the graph; to be determined in later versions with graph file input
-		int[][] graphDefinition = new int[][]{{0,1,1,1,1},//easy test graph changed as needed, necessary for testing
-										  	  {1,0,0,0,0},
-										  	  {1,0,0,0,0},
-										  	  {1,0,0,0,0},
-										  	  {1,0,0,0,0}};
+		int numVertices = 4;// number of vertices in the graph; to be determined in later versions with graph file input
+		int[][] graphDefinition = new int[][]{{0,1,1,1},//easy test graph changed as needed, necessary for testing
+										  	  {1,0,1,1},
+										  	  {1,1,0,1},
+										  	  {1,1,1,0}};
 
 		// creates an array that, for each index in the graph definition array, stores
 		// the number of connections on that vertex.
@@ -122,8 +121,23 @@ public class Driver {
 		//now we're going to remove all the extraneous tiles and get our final tile array
 		int numTiles=0;
 		for (int v: tileSizeTypes) {
-			numTiles += (int)binomial(v+connectionTypes-1,connectionTypes);
+			numTiles += (int)binomial(v+connectionTypes-1,v);
 		}
 		int[][] tiles = new int[numTiles][];
+		int index = 0;
+		for (int v : tileSizeTypes){
+			for (int i=0;i<complexTiles[v-1].length;i++){
+				tiles[index]=complexTiles[v-1][i];
+				index++;
+			}
+		}
+		
+		int[][][] pots = new int [(int)binomial(numVertices+numTiles-1,numVertices)][][];
+		basePot pot = new basePot(numVertices,numTiles,tiles);
+		for (int i=0;i<pots.length;i++){
+			pots[i]=pot.returnPot();
+			pot.count();
+		}
+		System.out.println("");
 	}
 }
