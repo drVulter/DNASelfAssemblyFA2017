@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public class Driver {
 
 	// a method for use in the creation of the rawTileSizeTypes array
-	static boolean isUnique(int[] vertexArmCount, int i) {
+	static boolean isUnique(short[] vertexArmCount, int i) {
 		boolean isUnique = true;
 		for (int j = 0; j < i; j++) {
 			if (vertexArmCount[j] == vertexArmCount[i])
@@ -38,15 +38,21 @@ public class Driver {
 	    }
 
 	public static void main(String[] args) {
-		int numVertices = 4;// number of vertices in the graph; to be determined in later versions with graph file input
-		int[][] graphDefinition = new int[][]{{0,1,1,1},//easy test graph changed as needed, necessary for testing
-										  	  {1,0,1,1},
-										  	  {1,1,0,1},
-										  	  {1,1,1,0}};
+		int numVertices = 10;// number of vertices in the graph; to be determined in later versions with graph file input
+		short[][] graphDefinition = new short[][]{{0,1,0,0,0,0,0,0,0,1},//test graph changed as needed, necessary for testing
+										  	  {1,0,1,0,0,0,0,0,0,0},
+										  	  {0,1,0,1,0,0,0,0,0,0},
+										  	  {0,0,1,0,1,0,0,0,0,0},
+										  	  {0,0,0,1,0,1,0,0,0,0},
+										  	  {0,0,0,0,1,0,1,0,0,0},
+										  	  {0,0,0,0,0,1,0,1,0,0},
+										  	  {0,0,0,0,0,0,1,0,1,0},
+										  	  {0,0,0,0,0,0,0,1,0,1},
+										  	  {1,0,0,0,0,0,0,0,1,0}};
 
 		// creates an array that, for each index in the graph definition array, stores
 		// the number of connections on that vertex.
-		int[] vertexArmCount = new int[graphDefinition.length];
+		short[] vertexArmCount = new short[graphDefinition.length];
 		for (int i = 0; i < graphDefinition.length; i++) {
 			for (int j = 0; j < graphDefinition[i].length; j++) {
 				vertexArmCount[i] += graphDefinition[i][j];
@@ -54,45 +60,35 @@ public class Driver {
 		}
 
 		// simplifies the vertexArmCount array into an array with only unique tile sizes
-		int[] rawTileSizeTypes = new int[vertexArmCount.length];
+		short[] rawTileSizeTypes = new short[vertexArmCount.length];
 		for (int i = 0; i < rawTileSizeTypes.length; i++) {
 			if (isUnique(vertexArmCount, i))
 				rawTileSizeTypes[i] = vertexArmCount[i];
 		}
 
 		// condenses the rawTileSizeTypes array, eliminating all the 0 elements
-		ArrayList<Integer> tileSizeTypesList = new ArrayList<Integer>();
+		ArrayList<Short> tileSizeTypesList = new ArrayList<Short>();
 		for (int i = 0; i < rawTileSizeTypes.length; i++)
 			if (rawTileSizeTypes[i] != 0) {
 				tileSizeTypesList.add(rawTileSizeTypes[i]);
 			}
 		tileSizeTypesList.trimToSize();
-		Integer[] integerArray = tileSizeTypesList.toArray(new Integer[0]);
-		int[] tileSizeTypes = ArrayUtils.toPrimitive(integerArray);
+		Short[] shortArray = tileSizeTypesList.toArray(new Short[0]);
+		short[] tileSizeTypes = ArrayUtils.toPrimitive(shortArray);
 
 		// determines the largest tile size, for use later on
-		int maxTileSize = 0;
-		for (int i : tileSizeTypes) {
+		short maxTileSize = 0;
+		for (short i : tileSizeTypes) {
 			if (i > maxTileSize)
 				maxTileSize = i;
 		}
 
 		// gives the total number of connection types possibly necessary, including both
 		// hatted and unhatted arms
-		int connectionTypes = 0;
-		for (int i : vertexArmCount) {
+		short connectionTypes = 0;
+		for (short i : vertexArmCount) {
 			connectionTypes += i;
 		}
-
-		// creates a list of the unhatted arms
-		int[] unhattedArms = new int[connectionTypes / 2];
-		for (int i = 1; i <= unhattedArms.length; i++)
-			unhattedArms[i - 1] = i;
-
-		// list of the hatted arms
-		int[] hattedArms = new int[connectionTypes / 2];
-		for (int i = 1; i <= hattedArms.length; i++)
-			hattedArms[i - 1] = -1 * i;// hatted connections are going to be denoted by negative numbers
 
 		/*
 		 * This is the initial array that will contain all the possible tiles. Its first
@@ -106,12 +102,12 @@ public class Driver {
 		 * or equal to the largest tile in the graph. In many graphs, the small tiles will
 		 * not be used at all. These extraneous tile sizes will be removed in the next step.
 		 */
-		int[][][] complexTiles = new int[maxTileSize][][];
+		short[][][] complexTiles = new short[maxTileSize][][];
 
 		baseTile tile;
-		for (int i = 0; i < complexTiles.length; i++) {
-			tile = new baseTile(i + 1, connectionTypes);
-			complexTiles[i] = new int[(int)binomial(connectionTypes+i,i+1)][];//updated formula for multiset counting
+		for (short i = 0; i < complexTiles.length; i++) {
+			tile = new baseTile((short)(i + 1), connectionTypes);
+			complexTiles[i] = new short[(int)binomial(connectionTypes+i,i+1)][];//updated formula for multiset counting
 			for (int j = 0; j < complexTiles[i].length; j++) {
 				complexTiles[i][j] = tile.returnTile();
 				tile.count();
@@ -120,21 +116,30 @@ public class Driver {
 		
 		//now we're going to remove all the extraneous tiles and get our final tile array
 		int numTiles=0;
-		for (int v: tileSizeTypes) {
+		for (short v: tileSizeTypes) {
 			numTiles += (int)binomial(v+connectionTypes-1,v);
 		}
-		int[][] tiles = new int[numTiles][];
+		short[][] tiles = new short[numTiles][];
 		int index = 0;
-		for (int v : tileSizeTypes){
+		for (short v : tileSizeTypes){
 			for (int i=0;i<complexTiles[v-1].length;i++){
 				tiles[index]=complexTiles[v-1][i];
 				index++;
 			}
 		}
-		
-		int[][][] pots = new int [(int)binomial(numVertices+numTiles-1,numVertices)][][];
+		basePot testPots = new basePot(numVertices,numTiles,tiles);
+		testPots.completeGraph();
+		do {
+			testPots.count();
+			testPots.completeGraph();
+		} while (testPots.finalPot()==false);
+		int completeGraphs = testPots.completeGraphs; 
+		short[][][] pots = new short[completeGraphs][][];
 		basePot pot = new basePot(numVertices,numTiles,tiles);
-		for (int i=0;i<pots.length;i++){
+		for (int i=0;i<completeGraphs;i++) {
+			while(pot.completeGraph()==false) {
+				pot.count();
+			}
 			pots[i]=pot.returnPot();
 			pot.count();
 		}

@@ -1,16 +1,16 @@
 package DNAmodeling;
 
 class baseTile {
- 	int base;
- 	int[]baseTile;
- 	int tileSize;
- 	int[]currentMin;
+ 	short base;
+ 	short[]baseTile;
+ 	short tileSize;
+ 	short[]currentMin;
  	
- 	baseTile(int inputTileSize,int inputBase){
+ 	baseTile(short inputTileSize,short inputBase){
  		base = inputBase;
  		tileSize = inputTileSize;
- 		baseTile = new int[tileSize];
- 		currentMin = new int[tileSize];
+ 		baseTile = new short[tileSize];
+ 		currentMin = new short[tileSize];
  		for (int i = 0;i<tileSize;i++)
  			currentMin[i] = 0;
  	}
@@ -43,20 +43,20 @@ class baseTile {
  	}
  		
  	//this method translates the current tile count to a real tile array.
- 	int [] returnTile(){
+ 	short [] returnTile(){
  		/*This constant is never used. I just wanted to display the codification 
  		I'm using. The counter starts at a-hat, moves up through the hatted arms, 
  		then returns to non-hatted a at base/2 and move up through the non-hatted arms from there.
  		*/
- 		final int AHAT = 0;
- 		int aNonHatted = base/2;
+ 		final short AHAT = 0;
+ 		short aNonHatted = (short)(base/2);
  		
- 		int [] tile = new int[tileSize];
+ 		short [] tile = new short[tileSize];
  		for (int i = 0;i<tileSize;i++) {
  			if (baseTile[i]<aNonHatted) {
- 			tile[i] = -1*(baseTile[i]+1);
+ 			tile[i] = (short)(-1*(baseTile[i]+1));
  			} else {
- 				tile[i] = baseTile[i]-aNonHatted+1;
+ 				tile[i] = (short)(baseTile[i]-aNonHatted+1);
  			}
  		}
  		return tile;
